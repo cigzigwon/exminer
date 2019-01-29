@@ -2,10 +2,10 @@ defmodule Miner.TaskQueue do
 	use GenServer
 	# the task queue must be a tub to build a list of web scraping tasks
 	# 
-	# {url: "", xquery: ""}...
+	# %{url: "", xquery: ""}...
 
 	def start_link(opts) do
-    GenServer.start_link(__MODULE__, :ok, opts)
+    GenServer.start_link(__MODULE__, {}, opts)
   end
 
   def init(init_arg) do
