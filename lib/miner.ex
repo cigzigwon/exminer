@@ -1,18 +1,7 @@
 defmodule Miner do
-  @moduledoc """
-  Documentation for Miner.
-  """
+  use Application
 
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> Miner.hello()
-      :world
-
-  """
-  def hello do
-    :world
+  def start(_type, _args) do
+    Miner.Supervisor.start_link(name: Miner.Supervisor)
   end
 end
