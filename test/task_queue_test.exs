@@ -8,14 +8,14 @@ defmodule Miner.TaskQueueTest do
   end
 
   test "can add tasks to the queue", %{queue: q} do
-  	item = %{url: "https://google.com", xdq: ""}
+  	item = %{url: "https://www.google.com", xdq: ""}
   	Miner.TaskQueue.add(q, item)
 
   	assert Miner.TaskQueue.get(q) == {item}
   end
 
   test "can get a task by index", %{queue: q} do
-  	item = %{url: "https://google.com", xdq: ""}
+  	item = %{url: "https://www.google.com", xdq: ""}
   	Miner.TaskQueue.add(q, item)
 
   	assert Miner.TaskQueue.getAtIndex(q, 0) == item
