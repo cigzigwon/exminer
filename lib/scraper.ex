@@ -1,6 +1,6 @@
 defmodule Miner.Scraper do
 
-	def get(url) do
+	def fetch_url(url) do
 		HTTPoison.start
 		HTTPoison.get! url
 	end
