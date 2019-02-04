@@ -11,7 +11,10 @@ defmodule Miner.Scraper do
 	end
 
 	def process(task) do
-		task.url
+		resp = 
+			task.url
 			|> fetch_url
+
+		resp
 	end
 end
