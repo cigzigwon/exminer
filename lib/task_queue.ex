@@ -14,4 +14,8 @@ defmodule Miner.TaskQueue do
 	def get(queue) do
 		Agent.get(queue, fn state -> state end)
 	end
+
+	def getAtIndex(queue, index) do
+		Agent.get(queue, fn state -> try do elem(state, index) rescue e in ArgumentError -> nil end end)
+	end
 end
