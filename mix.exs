@@ -22,9 +22,7 @@ defmodule Miner.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:socket, "~> 0.3.13"},
-      {:poison, "~> 3.1.0"},
-      {:joken, "~> 1.4.1"}
+      {:httpoison, "~> 1.4"}
     ]
   end
 end
