@@ -25,4 +25,13 @@ defmodule Miner.TaskQueueTest do
 
   	assert Miner.TaskQueue.getAtIndex(q, 1) == item
   end
+
+  test "can update a task with response data", %{queue: q} do
+    item = %{url: "https://www.google.com", xdq: ""}
+    Miner.TaskQueue.add(q, item)
+    item = Map.put(item, :resp, "<html></html>")
+    Miner.TaskQueue.update(q, 0, item)
+
+    assert Miner.TaskQueue.getAtIndex(q, 0).resp == item.resp
+  end
 end
