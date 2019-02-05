@@ -3,7 +3,7 @@ defmodule Miner.TaskQueueTest do
   doctest Miner.TaskQueue
 
   setup do
-    {:ok, q} = Miner.TaskQueue.start_link
+    {:ok, q} = Miner.TaskQueue.start_link([])
     item = %{url: "https://www.google.com", xdq: ""}
     %{queue: q, item: item}
   end

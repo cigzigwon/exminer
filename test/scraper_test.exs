@@ -3,7 +3,7 @@ defmodule Miner.ScraperTest do
   doctest Miner.Scraper
 
   setup do
-    {:ok, q} = Miner.TaskQueue.start_link
+    {:ok, q} = Miner.TaskQueue.start_link([])
     item = %{url: "https://www.google.com", xdq: ""}
   	Miner.TaskQueue.add(q, item)
   	Miner.TaskQueue.add(q, item)
