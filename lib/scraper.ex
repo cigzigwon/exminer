@@ -6,7 +6,7 @@ defmodule Miner.Scraper do
 	end
 
 	def process_queue(tasks) do
-		Enum.each(Tuple.to_list(tasks), fn task -> Task.Supervisor.start_child(Miner.TaskSupervisor, fn -> process(task) end) end)
+		Enum.each(Tuple.to_list(tasks), fn task -> spawn_task(task) end)
 		:ok
 	end
 
@@ -16,5 +16,9 @@ defmodule Miner.Scraper do
 			|> fetch_url
 
 		resp
+	end
+
+	defp spawn_task(task) do
+		Task.Supervisor.start_child(Miner.TaskSupervisor, fn -> process(task) end)
 	end
 end
