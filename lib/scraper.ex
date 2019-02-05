@@ -7,7 +7,6 @@ defmodule Miner.Scraper do
 
 	def process_queue(tasks) do
 		Enum.each(Tuple.to_list(tasks), fn task -> spawn_task(task) end)
-		:ok
 	end
 
 	def process(task) do
