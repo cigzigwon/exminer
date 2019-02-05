@@ -6,8 +6,8 @@ defmodule Miner.TaskQueue do
 		Agent.start_link(fn -> {} end)
 	end
 
-	def add(queue, item) do
-		Agent.update(queue, &Tuple.append(&1, item))
+	def add(queue, task) do
+		Agent.update(queue, &Tuple.append(&1, task))
 	end
 
 	def get(queue) do
@@ -18,7 +18,11 @@ defmodule Miner.TaskQueue do
 		Agent.get(queue, fn state -> try do elem(state, index) rescue _e in ArgumentError -> nil end end)
 	end
 
-	def update(queue, index, item) do
-		Agent.update(queue, fn state -> put_elem(state, index, item) end)
+	def replace(queue, tasks) do
+		Agent.update(queue, fn _state -> tasks end)
+	end
+
+	def update(queue, index, task) do
+		Agent.update(queue, fn state -> put_elem(state, index, task) end)
 	end
 end
