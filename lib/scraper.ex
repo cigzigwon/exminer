@@ -17,7 +17,8 @@ defmodule Miner.Scraper do
 	end
 
 	defp spawn_task(task) do
-		Task.Supervisor.async_nolink(Miner.TaskSupervisor, fn -> run(task) |> store end)
+		task = Task.Supervisor.async_nolink(Miner.TaskSupervisor, fn -> run(task) |> store end)
+		Task.await(task) |> IO.inspect
 	end
 
 	defp store(res) do
