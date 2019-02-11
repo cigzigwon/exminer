@@ -7,8 +7,10 @@ defmodule Miner.Scraper do
 		HTTPoison.get! url
 	end
 
-	def process_queue(tasks) do
-		Enum.each(Tuple.to_list(tasks), fn task -> spawn_task(task) end)
+	def process_queue(q) do
+		task = Task.Supervisor.async(Miner.TaskQueueSupervisor, fn -> task_reducer(q) end)
+		Task.await(task)
+		q
 	end
 
 	def run(task) do
@@ -17,11 +19,21 @@ defmodule Miner.Scraper do
 	end
 
 	defp spawn_task(task) do
-		task = Task.Supervisor.async_nolink(Miner.TaskSupervisor, fn -> run(task) |> store end)
-		Task.await(task) |> IO.inspect
+		task = Task.Supervisor.async_nolink(Miner.TaskSupervisor, fn -> run(task) |> log end)
+		Task.await(task)
 	end
 
-	defp store(res) do
-		"Status: #{res.status_code}" |> Logger.info
+	defp log(res) do
+		"Scrape response status: #{res.status_code}" |> Logger.info
+		res
+	end
+
+	defp handle_result(res, q, index, task) do
+		Miner.TaskQueue.update(q, index, %{url: task.url, xdq: task.xdq, body: res.body, status_code: res.status_code})
+		index + 1
+	end
+
+	defp task_reducer(q) do
+		Enum.reduce(Miner.TaskQueue.get(q) |> Tuple.to_list, 0, fn task, index -> spawn_task(task) |> handle_result(q, index, task) end)
 	end
 end
