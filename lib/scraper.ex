@@ -1,4 +1,6 @@
 defmodule Miner.Scraper do
+	require Logger
+	require IO
 
 	def fetch_url(url) do
 		HTTPoison.start
@@ -15,10 +17,10 @@ defmodule Miner.Scraper do
 	end
 
 	defp spawn_task(task) do
-		Task.Supervisor.start_child(Miner.TaskSupervisor, fn -> run(task) |> store end)
+		Task.Supervisor.async_nolink(Miner.TaskSupervisor, fn -> run(task) |> store end)
 	end
 
 	defp store(res) do
-		
+		"Status: #{res.status_code}" |> Logger.info
 	end
 end
