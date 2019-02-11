@@ -16,7 +16,7 @@ defmodule Miner.ScraperTest do
   end
 
   test "can process an item in the queue", %{queue: q} do
-  	assert Miner.Scraper.process(Miner.TaskQueue.getAtIndex(q, 0)).status_code == 200
+  	assert Miner.Scraper.run(Miner.TaskQueue.getAtIndex(q, 0)).status_code == 200
   end
 
   test "can process all items in queue", %{queue: q} do

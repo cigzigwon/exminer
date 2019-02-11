@@ -9,12 +9,16 @@ defmodule Miner.Scraper do
 		Enum.each(Tuple.to_list(tasks), fn task -> spawn_task(task) end)
 	end
 
-	def process(task) do
+	def run(task) do
 			task.url
 			|> fetch_url
 	end
 
 	defp spawn_task(task) do
-		Task.Supervisor.start_child(Miner.TaskSupervisor, fn -> process(task) end)
+		Task.Supervisor.start_child(Miner.TaskSupervisor, fn -> run(task) |> store end)
+	end
+
+	defp store(res) do
+		
 	end
 end
