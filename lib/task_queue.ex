@@ -13,7 +13,7 @@ defmodule Miner.TaskQueue do
   end
 
 
-	def start_link(opts) do
+	def start_link(_opts) do
 		Agent.start_link(fn -> {} end)
 	end
 
