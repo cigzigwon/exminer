@@ -25,7 +25,6 @@ defmodule Miner.Scraper do
 
 	defp log(res) do
 		"response status: #{res.status_code}" |> Logger.info
-		# "Scrape response body: #{res.body}" |> Logger.info
 		res
 	end
 
