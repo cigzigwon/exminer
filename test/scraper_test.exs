@@ -4,8 +4,8 @@ defmodule Miner.ScraperTest do
 
   setup do
     {:ok, q} = Miner.TaskQueue.start_link([])
-  	Miner.TaskQueue.add(q,  %{url: "https://www.google.com", xdq: ""})
-  	Miner.TaskQueue.add(q,  %{url: "https://www.google.com", xdq: ""})
+  	Miner.TaskQueue.add(q,  %{url: "https://www.google.com"})
+  	Miner.TaskQueue.add(q,  %{url: "https://hexdocs.pm/elixir/1.8.1/Kernel.html", xdq: ""})
     %{queue: q}
   end
 
@@ -20,7 +20,7 @@ defmodule Miner.ScraperTest do
 
   test "can process all items in queue", %{queue: q} do
   	assert Miner.Scraper.process_queue(q) == q
-    assert Miner.TaskQueue.getAtIndex(q, 0).status_code == 200
-    assert Miner.TaskQueue.getAtIndex(q, 1).status_code == 200 
+    assert Miner.TaskQueue.getAtIndex(q, 0).url == "https://www.google.com"
+    assert Miner.TaskQueue.getAtIndex(q, 1).status_code == 200
   end
 end

@@ -25,11 +25,17 @@ defmodule Miner.Scraper do
 
 	defp log(res) do
 		"Scrape response status: #{res.status_code}" |> Logger.info
+		# "Scrape response body: #{res.body}" |> Logger.info
 		res
 	end
 
 	defp handle_result(res, q, index, task) do
-		Miner.TaskQueue.update(q, index, %{url: task.url, xdq: task.xdq, body: res.body, status_code: res.status_code})
+		try do
+			Miner.TaskQueue.update(q, index, %{url: task.url, xdq: task.xdq, body: res.body, status_code: res.status_code})
+		rescue
+			e in KeyError -> e
+		end
+
 		index + 1
 	end
 
