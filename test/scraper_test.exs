@@ -5,7 +5,7 @@ defmodule Miner.ScraperTest do
   setup do
     {:ok, q} = Miner.TaskQueue.start_link([])
   	Miner.TaskQueue.add(q,  %{url: "https://www.google.com"})
-  	Miner.TaskQueue.add(q,  %{url: "https://hexdocs.pm/elixir/1.8.1/Kernel.html", xdq: ""})
+  	Miner.TaskQueue.add(q,  %{url: "https://hexdocs.pm/elixir/1.8.1/Kernel.html", xpq: %{}})
     %{queue: q}
   end
 

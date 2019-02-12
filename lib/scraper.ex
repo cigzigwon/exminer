@@ -31,7 +31,7 @@ defmodule Miner.Scraper do
 
 	defp handle_result(res, q, index, task) do
 		try do
-			Miner.TaskQueue.update(q, index, %{url: task.url, xdq: task.xdq, body: res.body, status_code: res.status_code})
+			Miner.TaskQueue.update(q, index, %{url: task.url, xpq: task.xpq, body: res.body, status_code: res.status_code})
 		rescue
 			e in KeyError -> e
 		end
