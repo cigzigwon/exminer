@@ -5,7 +5,10 @@ defmodule Miner.ScraperTest do
   setup do
     q = start_supervised!(Miner.TaskQueue)
   	Miner.TaskQueue.add(q,  %{url: "https://www.google.com"})
-  	Miner.TaskQueue.add(q,  %{url: "https://hexdocs.pm/elixir/1.8.1/Kernel.html", xpq: %{}})
+  	Miner.TaskQueue.add(q,  %{
+      url: "https://elixir-lang.org/getting-started/basic-types.html",
+      xpq: %{get_by_tag: "h1"}
+    })
     %{queue: q}
   end
 
@@ -22,5 +25,6 @@ defmodule Miner.ScraperTest do
   	assert Miner.Scraper.process_queue(q) == q
     assert Miner.TaskQueue.getAtIndex(q, 0).url == "https://www.google.com"
     assert Miner.TaskQueue.getAtIndex(q, 1).status_code == 200
+    assert Miner.TaskQueue.getAtIndex(q, 1).result == "Basic types"
   end
 end
