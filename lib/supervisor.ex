@@ -9,11 +9,11 @@ defmodule Miner.Supervisor do
   @impl true
   def init(_init_arg) do
     children = [
-      Miner.TaskQueue,
+      {Miner.TaskQueue, name: Miner.TaskQueue},
       {Task.Supervisor, name: Miner.TaskSupervisor},
       {Task.Supervisor, name: Miner.TaskQueueSupervisor}
     ]
 
-    Supervisor.init(children, strategy: :one_for_all)
+    Supervisor.init(children, strategy: :one_for_one)
   end
 end
