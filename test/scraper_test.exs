@@ -3,7 +3,7 @@ defmodule Miner.ScraperTest do
   doctest Miner.Scraper
 
   setup do
-    {:ok, q} = Miner.TaskQueue.start_link([])
+    q = start_supervised!(Miner.TaskQueue)
   	Miner.TaskQueue.add(q,  %{url: "https://www.google.com"})
   	Miner.TaskQueue.add(q,  %{url: "https://hexdocs.pm/elixir/1.8.1/Kernel.html", xpq: %{}})
     %{queue: q}
