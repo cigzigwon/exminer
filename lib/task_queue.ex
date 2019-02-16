@@ -1,16 +1,7 @@
 defmodule Miner.TaskQueue do
+	use Agent
 	# is a queueue of tasks
 	# {%{url: "", xquery: ""}, %{url: "", xquery: ""}, %{url: "", xquery: ""}}
-
-	def child_spec(opts) do
-    %{
-      id: __MODULE__,
-      start: {__MODULE__, :start_link, [opts]},
-      type: :supervisor,
-      restart: :permanent,
-      shutdown: 500
-    }
-  end
 
 
 	def start_link(_opts) do
