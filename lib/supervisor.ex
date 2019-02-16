@@ -9,6 +9,7 @@ defmodule Miner.Supervisor do
   @impl true
   def init(_init_arg) do
     children = [
+      {Miner.TaskQueue, name: Miner.TaskQueue},
       {Task.Supervisor, name: Miner.TaskSupervisor},
       {Task.Supervisor, name: Miner.TaskQueueSupervisor}
     ]

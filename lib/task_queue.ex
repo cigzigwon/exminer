@@ -4,8 +4,8 @@ defmodule Miner.TaskQueue do
 	# {%{url: "", xquery: ""}, %{url: "", xquery: ""}, %{url: "", xquery: ""}}
 
 
-	def start_link(_opts) do
-		Agent.start_link(fn -> {} end)
+	def start_link(opts) do
+		Agent.start_link(fn -> {} end, opts)
 	end
 
 	def add(queue, task) do

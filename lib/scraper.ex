@@ -6,6 +6,10 @@ defmodule Miner.Scraper do
 		HTTPoison.get! url
 	end
 
+	def build_queue(tasks) do
+		Miner.TaskQueue.replace(Miner.TaskQueue, tasks)
+	end
+
 	def process_queue(q) do
 		task = Task.Supervisor.async(Miner.TaskQueueSupervisor, fn -> task_reducer(q) end)
 		Task.await(task)
