@@ -6,7 +6,7 @@ defmodule Miner.TaskQueue do
     %{
       id: __MODULE__,
       start: {__MODULE__, :start_link, [opts]},
-      type: :worker,
+      type: :supervisor,
       restart: :permanent,
       shutdown: 500
     }
