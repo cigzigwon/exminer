@@ -1,10 +1,13 @@
 defmodule Miner.Scraper do
 	require Logger
-	require IO
 
 	def fetch_url(url) do
 		HTTPoison.start
 		HTTPoison.get! url
+	end
+
+	def build_queue(tasks) do
+		Miner.TaskQueue.replace(Miner.TaskQueue, tasks)
 	end
 
 	def process_queue(q) do

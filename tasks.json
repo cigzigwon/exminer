@@ -1,0 +1,11 @@
+[
+	{"url": "https://www.google.com"},
+	{
+		"url": "https://elixir-lang.org/getting-started/basic-types.html",
+		"xpq": [
+			{"selector": "h1"},
+			{"selector": "#booleans"},
+			{"selector": "#tuples"}
+		]
+	}
+]
