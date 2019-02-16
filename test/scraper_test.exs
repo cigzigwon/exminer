@@ -16,7 +16,7 @@ defmodule Miner.ScraperTest do
   end
 
   test "can process all items in queue and see results" do
-  	Miner.Scraper.process_queue(Miner.TaskQueue)
+  	assert Miner.Scraper.process_queue == 2
     assert Miner.TaskQueue.getAtIndex(Miner.TaskQueue, 0).url == "https://www.google.com"
     assert Miner.TaskQueue.getAtIndex(Miner.TaskQueue, 1).status_code == 200
     assert Miner.TaskQueue.getAtIndex(Miner.TaskQueue, 1).results == ["Basic types", "Booleans", "Tuples"]
