@@ -7,11 +7,7 @@ defmodule Miner.ScraperTest do
   	Miner.TaskQueue.add(q,  %{url: "https://www.google.com"})
   	Miner.TaskQueue.add(q,  %{
       url: "https://elixir-lang.org/getting-started/basic-types.html",
-      xpq: %{selector: "h1"}
-    })
-    Miner.TaskQueue.add(q,  %{
-      url: "https://elixir-lang.org/getting-started/basic-types.html",
-      xpq: %{selector: "#booleans"}
+      xpq: [%{selector: "h1"}, %{selector: "#booleans"}, %{selector: "#tuples"}]
     })
     %{queue: q}
   end
@@ -29,8 +25,6 @@ defmodule Miner.ScraperTest do
   	Miner.Scraper.process_queue(q)
     assert Miner.TaskQueue.getAtIndex(q, 0).url == "https://www.google.com"
     assert Miner.TaskQueue.getAtIndex(q, 1).status_code == 200
-    assert Miner.TaskQueue.getAtIndex(q, 1).result == "Basic types"
-    assert Miner.TaskQueue.getAtIndex(q, 2).status_code == 200
-    assert Miner.TaskQueue.getAtIndex(q, 2).result == "Booleans"
+    assert Miner.TaskQueue.getAtIndex(q, 1).results == ["Basic types", "Booleans", "Tuples"]
   end
 end
