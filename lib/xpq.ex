@@ -1,7 +1,7 @@
 defmodule Miner.XPQ do
 	import Floki
 
-	def getByTag(doc, tag) do
+	def get(doc, tag) do
 		doc 
 		|> find(tag)
 		|> text

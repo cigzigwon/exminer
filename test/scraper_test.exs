@@ -7,7 +7,7 @@ defmodule Miner.ScraperTest do
   	Miner.TaskQueue.add(q,  %{url: "https://www.google.com"})
   	Miner.TaskQueue.add(q,  %{
       url: "https://elixir-lang.org/getting-started/basic-types.html",
-      xpq: %{get_by_tag: "h1"}
+      xpq: %{selector: "h1"}
     })
     %{queue: q}
   end
