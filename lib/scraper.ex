@@ -10,10 +10,9 @@ defmodule Miner.Scraper do
 		Miner.TaskQueue.replace(Miner.TaskQueue, tasks)
 	end
 
-	def process_queue(q) do
-		task = Task.Supervisor.async(Miner.TaskQueueSupervisor, fn -> task_reducer(q) end)
+	def process_queue() do
+		task = Task.Supervisor.async(Miner.TaskQueueSupervisor, fn -> task_reducer() end)
 		Task.await(task)
-		q
 	end
 
 	def run(task) do
@@ -31,11 +30,11 @@ defmodule Miner.Scraper do
 		res
 	end
 
-	defp handle_result(res, q, index, task) do
+	defp handle_result(res, index, task) do
 		try do
 			results = []
 			results = Enum.map(task.xpq, fn query -> results ++ Miner.XPQ.get(res.body, query.selector) end)
-			Miner.TaskQueue.update(q, index, %{url: task.url, xpq: task.xpq, results: results, status_code: res.status_code})
+			Miner.TaskQueue.update(Miner.TaskQueue, index, %{url: task.url, xpq: task.xpq, results: results, status_code: res.status_code})
 		rescue
 			e in KeyError -> e
 		end
@@ -43,7 +42,7 @@ defmodule Miner.Scraper do
 		index + 1
 	end
 
-	defp task_reducer(q) do
-		Enum.reduce(Miner.TaskQueue.get(q) |> Tuple.to_list, 0, fn task, index -> spawn_task(task) |> handle_result(q, index, task) end)
+	defp task_reducer() do
+		Enum.reduce(Miner.TaskQueue.get(Miner.TaskQueue) |> Tuple.to_list, 0, fn task, index -> spawn_task(task) |> handle_result(index, task) end)
 	end
 end
