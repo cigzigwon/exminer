@@ -22,7 +22,7 @@ defmodule Miner.ScraperTest do
   end
 
   test "can process all items in queue", %{queue: q} do
-  	assert Miner.Scraper.process_queue(q) == q
+  	Miner.Scraper.process_queue(q)
     assert Miner.TaskQueue.getAtIndex(q, 0).url == "https://www.google.com"
     assert Miner.TaskQueue.getAtIndex(q, 1).status_code == 200
     assert Miner.TaskQueue.getAtIndex(q, 1).result == "Basic types"
