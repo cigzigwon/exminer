@@ -3,12 +3,9 @@ defmodule Miner.ScraperTest do
   doctest Miner.Scraper
 
   setup do
+    tasks = Miner.TaskLoader.tasks("tasks.json")
     q = start_supervised!(Miner.TaskQueue)
-  	Miner.TaskQueue.add(q,  %{url: "https://www.google.com"})
-  	Miner.TaskQueue.add(q,  %{
-      url: "https://elixir-lang.org/getting-started/basic-types.html",
-      xpq: [%{selector: "h1"}, %{selector: "#booleans"}, %{selector: "#tuples"}]
-    })
+  	Miner.TaskQueue.replace(q,  tasks)
     %{queue: q}
   end
 

@@ -1,6 +1,5 @@
 defmodule Miner.Scraper do
 	require Logger
-	require IO
 
 	def fetch_url(url) do
 		HTTPoison.start

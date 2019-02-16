@@ -23,8 +23,8 @@ defmodule Miner.MixProject do
   defp deps do
     [
       {:httpoison, "~> 1.4"},
-      {:sweet_xml, "~> 0.6.5"},
-      {:floki, "~> 0.20.0"}
+      {:floki, "~> 0.20.0"},
+      {:poison, "~> 4.0"}
     ]
   end
 end
