@@ -30,8 +30,9 @@ defmodule Miner.Scraper do
 
 	defp handle_result(res, q, index, task) do
 		try do
-			result = Miner.XPQ.getByTag(res.body, task.xpq.get_by_tag)
-			Miner.TaskQueue.update(q, index, %{url: task.url, xpq: task.xpq, result: result, status_code: res.status_code})
+			results = []
+			results = Enum.map(task.xpq, fn query -> results ++ Miner.XPQ.get(res.body, query.selector) end)
+			Miner.TaskQueue.update(q, index, %{url: task.url, xpq: task.xpq, results: results, status_code: res.status_code})
 		rescue
 			e in KeyError -> e
 		end
