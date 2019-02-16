@@ -18,7 +18,7 @@ defmodule Miner.TaskQueueTest do
   	assert Miner.TaskQueue.getAtIndex(q, 1) == nil
   end
 
-  test "can get a newly added task", do
+  test "can get a newly added task", %{queue: q} do
     Miner.TaskQueue.add(q, item)
     assert Miner.TaskQueue.getAtIndex(q, 1) == item
   end
