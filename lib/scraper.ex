@@ -2,7 +2,6 @@ defmodule Miner.Scraper do
 	require Logger
 
 	def fetch_url(url) do
-		HTTPoison.start
 		HTTPoison.get! url
 	end
 
