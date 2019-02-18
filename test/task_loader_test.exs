@@ -7,17 +7,7 @@ defmodule Miner.TaskLoaderTest do
   	%{path: path}
   end
 
-  test "returns a map of tasks", %{path: path} do
-  	assert Miner.TaskLoader.tasks(path) ==  {
-              %{url: "https://www.google.com"},
-              %{
-                url: "https://elixir-lang.org/getting-started/basic-types.html",
-                xpq: [
-                  %{selector: "h1"},
-                  %{selector: "#booleans"},
-                  %{selector: "#tuples"}
-                ]
-              }
-            }
+  test "returns a tuple of tasks", %{path: path} do
+  	assert is_tuple(Miner.TaskLoader.tasks(path))
   end
 end

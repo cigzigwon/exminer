@@ -7,5 +7,13 @@
 			{"selector": "#booleans"},
 			{"selector": "#tuples"}
 		]
+	},
+	{
+		"url": "https://elixir-lang.org/getting-started/pattern-matching.html",
+		"xpq": [
+			{"selector": "h1"},
+			{"selector": "#the-match-operator"},
+			{"selector": "#the-pin-operator"}
+		]
 	}
 ]
