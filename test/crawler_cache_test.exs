@@ -24,7 +24,7 @@ defmodule Miner.Crawler.CacheTest do
 
   test "the cache can get blasted with key vals", %{cache: cache} do
     Cache.flush(cache)
-  	for _ <- @range do
+  	for n <- @range do
   		assert Cache.put(cache, "key", "value") == :ok
   	end
 
