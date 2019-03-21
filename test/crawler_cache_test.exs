@@ -6,7 +6,7 @@ defmodule Miner.Crawler.CacheTest do
   @range 1..10
 
   setup do
-    cache = Miner.Crawler.Cache
+    cache = Cache
     %{cache: cache}
   end
 
