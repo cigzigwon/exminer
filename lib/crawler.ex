@@ -15,8 +15,8 @@ defmodule Miner.Crawler do
 	end
 
 	defp fetch_body(url) do
-		log url
 		if String.contains?(url, @valid_http) do
+			log url
 			res = HTTPoison.get! url
 			res.body
 		else
