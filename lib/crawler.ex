@@ -1,38 +1,25 @@
 defmodule Miner.Crawler do
+	alias Miner.Crawler.Cache
 	require Logger
 
 	@valid_http ["http://", "https://"]
 	@not_allowed ["mailto:", "tel:"]
+
+	def cache(list, domain) do
+		Cache |> Cache.put(domain, list)
+	end
 
 	def crawl(domain) do
 		domain
 		|> fetch_body
 		|> Floki.find("a")
 		|> Floki.attribute("href")
-		|> Enum.map(fn (url) -> fetch_body(domain, url |> validate) end)
-
-		:ok
+		|> filter
+		|> cache(domain)
 	end
 
 	defp fetch_body(url) do
 		if String.contains?(url, @valid_http) do
-			log url
-			res = HTTPoison.get! url
-			res.body
-		else
-			""
-		end
-	end
-
-	defp fetch_body(domain, url) do
-		url =
-		if not String.contains?(url, @valid_http) and String.length(url) > 1 do
-			domain <> url
-		else
-			url
-		end
-
-		if String.contains?(url, domain) do
 			log url
 			res = HTTPoison.get! url
 			res.body
@@ -46,11 +33,12 @@ defmodule Miner.Crawler do
 		str
 	end
 
-	defp validate(href) do
-		if String.contains?(href, @not_allowed) do
-			""
-		else
-			href
-		end
+	defp filter(list) do
+		list |>
+		Enum.map(fn (href) -> 
+			if not String.contains?(href, @not_allowed) and String.length(href) > 1 do
+				href
+			end
+		end)
 	end
 end

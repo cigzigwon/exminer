@@ -10,5 +10,7 @@ defmodule Miner.CrawlerTest do
 
   test "can crawl links on the domain" do
   	assert Miner.Crawler.crawl(@domain) == :ok
+  	assert {:ok, list} = Miner.Crawler.Cache.get(@domain)
+  	assert list == []
   end
 end
