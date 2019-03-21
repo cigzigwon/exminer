@@ -6,21 +6,24 @@ defmodule Miner.Crawler.CacheTest do
   @range 1..10
 
   setup do
-    cache = start_supervised!(Miner.Crawler.Cache)
+    cache = Miner.Crawler.Cache
     %{cache: cache}
   end
 
-  test "an empty cache is supervised" do
+  test "an empty cache is supervised", %{cache: cache} do
+    Cache.flush(cache)
   	assert Cache.get("key") == nil
   end
 
   test "a cache can be written to and read from", %{cache: cache} do
+    Cache.flush(cache)
   	assert Cache.put(cache, "key", "value") == :ok
   	assert {:ok, value} = Cache.get("key")
   	assert value == "value"
   end
 
   test "the cache can get blasted with key vals", %{cache: cache} do
+    Cache.flush(cache)
   	for _ <- @range do
   		assert Cache.put(cache, "key", "value") == :ok
   	end

@@ -7,6 +7,10 @@ defmodule Miner.Crawler.Cache do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
+  def flush(cache) do
+    GenServer.call(cache, :flush)
+  end
+
   def get(key) do
   	case :ets.lookup(@name, key) do
       [{^key, value}] -> {:ok, value}
@@ -30,6 +34,12 @@ defmodule Miner.Crawler.Cache do
   @impl true
   def handle_call({:put, key, value}, _from, table) do
   	:ets.insert(table, {key, value})
+    {:reply, :ok, table}
+  end
+
+  @impl true
+  def handle_call(:flush, _from, table) do
+    :ets.delete_all_objects(table)
     {:reply, :ok, table}
   end
 end
