@@ -3,6 +3,8 @@ defmodule Miner.Crawler.CacheTest do
   doctest Miner.Crawler.Cache
   alias Miner.Crawler.Cache
 
+  @range 1..10
+
   setup do
     cache = start_supervised!(Miner.Crawler.Cache)
     %{cache: cache}
@@ -16,5 +18,14 @@ defmodule Miner.Crawler.CacheTest do
   	assert Cache.put(cache, "key", "value") == :ok
   	assert {:ok, value} = Cache.get("key")
   	assert value == "value"
+  end
+
+  test "the cache can get blasted with key vals", %{cache: cache} do
+  	for _ <- @range do
+  		assert Cache.put(cache, "key", "value") == :ok
+  	end
+
+  	assert list = Cache.get("key")
+  	assert Enum.count(list) == 10
   end
 end
