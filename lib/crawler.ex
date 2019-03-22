@@ -2,13 +2,21 @@ defmodule Miner.Crawler do
 	alias Miner.Crawler.Cache
 	require IO
 
-	@valid_http ["http://", "https://"]
-	@not_allowed ["mailto:", "tel:"]
+	@notallowed ["mailto:", "tel:", "ftp:"]
+
+	def crawl(domain) do
+		domain 
+		|> get
+		|> Enum.each(fn url -> if url |> String.contains?(domain), do: url |> get end)
+	end
 
 	def get(url) do
 		url
 		|> fetch_body
 		|> refs
+		|> fix(url)
+		|> sanitize
+		|> cache(url)
 	end
 
 	def refs(body) do
@@ -22,8 +30,31 @@ defmodule Miner.Crawler do
 		res.body
 	end
 
-	defp inspect(data) do
+	defp cache(links, url) do
+		Cache |> Cache.put(url, links)
+		links
+	end
+
+	defp fix(links, url) do
+		links
+		|> Enum.map(fn str -> if str |> String.match?(~r/^\/(\w+|\d+)/), do: url <> str, else: str end)
+	end
+
+	defp peek(data) do
 		IO.inspect data
 		data
+	end
+
+	defp sanitize(links) do
+		links
+		|> Enum.filter(fn str -> str |> is_valid? end)
+	end
+
+	defp is_valid?(str) do
+		if str |> String.length > 1 and not String.contains?(str, @notallowed) do
+			true
+		else 
+			false
+		end
 	end
 end
