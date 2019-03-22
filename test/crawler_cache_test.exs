@@ -28,7 +28,7 @@ defmodule Miner.Crawler.CacheTest do
   		assert Cache.put(cache, "key", "value") == :ok
   	end
 
-  	assert list = Cache.get("key")
-  	assert Enum.count(list) == 10
+  	assert {:ok, value} = Cache.get("key")
+  	assert value == "value"
   end
 end

@@ -27,7 +27,7 @@ defmodule Miner.Crawler.Cache do
 
   @impl true
   def init(_) do
-  	table = :ets.new(@name, [:duplicate_bag, :protected, :named_table, read_concurrency: true])
+  	table = :ets.new(@name, [:set, :protected, :named_table, read_concurrency: true])
     {:ok, table}
   end
 
