@@ -37,7 +37,7 @@ defmodule Miner.Crawler do
 		|> Enum.map(fn str -> if str |> String.match?(~r/^\/(\w+|\d+)/), do: domain <> str, else: str end)
 	end
 
-	defp peek(data) do
+	defp _peek(data) do
 		IO.inspect data
 		data
 	end
