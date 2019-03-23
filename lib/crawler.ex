@@ -15,6 +15,7 @@ defmodule Miner.Crawler do
 		|> fix
 		|> sanitize
 		|> cache
+		|> write
 		|> crawl
 	end
 
@@ -23,6 +24,7 @@ defmodule Miner.Crawler do
 		|> Enum.each(fn link ->
 			if Cache.get(link).crawl and link |> String.contains?(Cache.get("domain")) do
 				Cache |> Cache.put(link, %{crawl: false})
+				write(link)
 				get(link)
 			end
 		end)
@@ -71,5 +73,12 @@ defmodule Miner.Crawler do
 		else 
 			false
 		end
+	end
+
+	defp write(links) do
+		{:ok, file} = File.open("dump.json", [:write])
+    IO.binwrite(file, links |> Poison.encode!)
+    File.close(file)
+    links
 	end
 end
