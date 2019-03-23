@@ -25,7 +25,9 @@ defmodule Miner.Scraper do
 	end
 
 	defp log(res) do
-		"response status: #{res.status_code}" |> Logger.info
+		if Mix.env != :test do
+			"response status: #{res.status_code}" |> Logger.info
+		end
 		res
 	end
 
