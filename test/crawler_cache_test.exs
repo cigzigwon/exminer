@@ -18,8 +18,7 @@ defmodule Miner.Crawler.CacheTest do
   test "a cache can be written to and read from", %{cache: cache} do
     Cache.flush(cache)
   	assert Cache.put(cache, "key", "value") == :ok
-  	assert {:ok, value} = Cache.get("key")
-  	assert value == "value"
+  	assert Cache.get("key") == "value"
   end
 
   test "the cache can get blasted with key vals", %{cache: cache} do
@@ -28,7 +27,13 @@ defmodule Miner.Crawler.CacheTest do
   		assert Cache.put(cache, "key", "value") == :ok
   	end
 
-  	assert {:ok, value} = Cache.get("key")
-  	assert value == "value"
+  	assert Cache.get("key") == "value"
+  end
+
+  test "cannot be overwritten if key exists", %{cache: cache} do
+    Cache.flush(cache)
+    assert Cache.put(cache, "key", "value") == :ok
+    assert Cache.put(cache, "key", "newval") == :ok
+    assert Cache.get("key") == "value"
   end
 end

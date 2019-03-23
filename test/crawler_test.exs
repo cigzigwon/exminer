@@ -20,9 +20,7 @@ defmodule Miner.CrawlerTest do
   end
 
   test "can get a link from cache" do
-  	assert {:ok, state} = Miner.Crawler.Cache.get("https://pyroclasti.cloud/blog")
-  	assert state == %{crawl: true}
-  	assert {:ok, domain} = Miner.Crawler.Cache.get("domain")
-  	assert domain == @domain
+  	assert Miner.Crawler.Cache.get("https://pyroclasti.cloud/blog") == %{crawl: true}
+  	assert Miner.Crawler.Cache.get("domain") == @domain
   end
 end

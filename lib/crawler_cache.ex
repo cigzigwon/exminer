@@ -13,7 +13,7 @@ defmodule Miner.Crawler.Cache do
 
   def get(key) do
   	case :ets.lookup(@name, key) do
-      [{^key, value}] -> {:ok, value}
+      [{^key, value}] -> value
       [] -> nil
       list -> list
     end
@@ -33,7 +33,10 @@ defmodule Miner.Crawler.Cache do
 
   @impl true
   def handle_call({:put, key, value}, _from, table) do
-  	:ets.insert(table, {key, value})
+    if key |> get == nil do
+      :ets.insert(table, {key, value})
+    end
+
     {:reply, :ok, table}
   end
 

@@ -32,9 +32,8 @@ defmodule Miner.Crawler do
 	end
 
 	defp fix(links) do
-		{:ok, domain} = Cache.get("domain")
 		links
-		|> Enum.map(fn str -> if str |> String.match?(~r/^\/(\w+|\d+)/), do: domain <> str, else: str end)
+		|> Enum.map(fn str -> if str |> String.match?(~r/^\/(\w+|\d+)/), do: Cache.get("domain") <> str, else: str end)
 	end
 
 	defp peek(data) do
