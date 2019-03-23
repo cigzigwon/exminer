@@ -2,10 +2,10 @@ defmodule Miner.CrawlerTest do
   use ExUnit.Case
   doctest Miner.Crawler
 
-  @url "https://pyroclasti.cloud"
+  @domain "https://pyroclasti.cloud"
 
   setup do
-  	links = Miner.Crawler.get(@url)
+  	links = Miner.Crawler.get(@domain)
   	%{links: links}
   end
 
@@ -22,5 +22,7 @@ defmodule Miner.CrawlerTest do
   test "can get a link from cache" do
   	assert {:ok, state} = Miner.Crawler.Cache.get("https://pyroclasti.cloud/blog")
   	assert state == %{crawl: true}
+  	assert {:ok, domain} = Miner.Crawler.Cache.get("domain")
+  	assert domain == @domain
   end
 end
