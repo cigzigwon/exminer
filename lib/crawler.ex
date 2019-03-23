@@ -36,6 +36,10 @@ defmodule Miner.Crawler do
 	end
 
 	defp fetch_body(url) do
+		if Mix.env != :test do
+			peek url
+		end
+		
 		res = HTTPoison.get! url
 		res.body
 	end
