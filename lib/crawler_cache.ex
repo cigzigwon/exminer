@@ -15,8 +15,11 @@ defmodule Miner.Crawler.Cache do
   	case :ets.lookup(@name, key) do
       [{^key, value}] -> value
       [] -> nil
-      list -> list
     end
+  end
+
+  def dump() do
+    :ets.tab2list(@name)
   end
 
   def put(cache, key, value) do

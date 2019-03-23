@@ -28,12 +28,18 @@ defmodule Miner.Crawler.CacheTest do
   	end
 
   	assert Cache.get("key") == "value"
-  end
+  end 
 
   test "cannot be overwritten if key exists", %{cache: cache} do
     Cache.flush(cache)
     assert Cache.put(cache, "key", "value") == :ok
     assert Cache.put(cache, "key", "newval") == :ok
     assert Cache.get("key") == "newval"
+  end
+
+  test "can dump cache", %{cache: cache} do
+    Cache.flush(cache)
+    assert Cache.put(cache, "key", "value") == :ok
+    assert Cache.dump == [{"key", "value"}]
   end
 end
