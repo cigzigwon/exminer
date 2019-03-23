@@ -1,5 +1,5 @@
 defmodule Miner.CrawlerTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case
   doctest Miner.Crawler
 
   @url "https://pyroclasti.cloud"
@@ -20,15 +20,7 @@ defmodule Miner.CrawlerTest do
   end
 
   test "can get a link from cache" do
-  	assert {:ok, links} = Miner.Crawler.Cache.get(@url)
-  	assert is_list(links)
-  	assert links |> List.first == "http://brewcruzr.com"
-  end
-
-  test "can crawl a given domain after getting initial links in cache" do
-  	assert Miner.Crawler.crawl(@url) == :ok
-  	assert {:ok, links} = Miner.Crawler.Cache.get("https://pyroclasti.cloud/blog")
-  	assert is_list(links)
-  	assert links == []
+  	assert {:ok, state} = Miner.Crawler.Cache.get("https://pyroclasti.cloud/blog")
+  	assert state == %{crawl: true}
   end
 end

@@ -4,19 +4,14 @@ defmodule Miner.Crawler do
 
 	@notallowed ["mailto:", "tel:", "ftp:"]
 
-	def crawl(domain) do
-		domain 
-		|> get
-		|> Enum.each(fn url -> if url |> String.contains?(domain), do: url |> get end)
-	end
-
 	def get(url) do
+		Cache |> Cache.put("domain", url)
 		url
 		|> fetch_body
 		|> refs
-		|> fix(url)
+		|> fix
 		|> sanitize
-		|> cache(url)
+		|> cache
 	end
 
 	def refs(body) do
@@ -30,14 +25,16 @@ defmodule Miner.Crawler do
 		res.body
 	end
 
-	defp cache(links, url) do
-		Cache |> Cache.put(url, links)
+	defp cache(links) do
+		links
+		|> Enum.each(fn link -> Cache |> Cache.put(link, %{crawl: true}) end)
 		links
 	end
 
-	defp fix(links, url) do
+	defp fix(links) do
+		{:ok, domain} = Cache.get("domain")
 		links
-		|> Enum.map(fn str -> if str |> String.match?(~r/^\/(\w+|\d+)/), do: url <> str, else: str end)
+		|> Enum.map(fn str -> if str |> String.match?(~r/^\/(\w+|\d+)/), do: domain <> str, else: str end)
 	end
 
 	defp peek(data) do
