@@ -2,16 +2,31 @@ defmodule Miner.Crawler do
 	alias Miner.Crawler.Cache
 	require IO
 
-	@notallowed ["mailto:", "tel:", "ftp:"]
+	@notallowed ["mailto:", "tel:", "ftp:", "#"]
 
 	def get(url) do
-		Cache |> Cache.put("domain", url)
+		if Cache.get("domain") == nil do
+			Cache |> Cache.put("domain", url)
+		end
+	
 		url
 		|> fetch_body
 		|> refs
 		|> fix
 		|> sanitize
 		|> cache
+		|> crawl
+	end
+
+	defp crawl(links) do
+		links
+		|> Enum.each(fn link ->
+			if Cache.get(link).crawl and link |> String.contains?(Cache.get("domain")) do
+				Cache |> Cache.put(link, %{crawl: false})
+				get(link)
+			end
+		end)
+		links
 	end
 
 	def refs(body) do
@@ -27,7 +42,7 @@ defmodule Miner.Crawler do
 
 	defp cache(links) do
 		links
-		|> Enum.each(fn link -> Cache |> Cache.put(link, %{crawl: true}) end)
+		|> Enum.each(fn link -> if Cache.get(link) == nil, do: Cache |> Cache.put(link, %{crawl: true}) end)
 		links
 	end
 

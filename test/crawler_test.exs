@@ -20,7 +20,7 @@ defmodule Miner.CrawlerTest do
   end
 
   test "can get a link from cache" do
-  	assert Miner.Crawler.Cache.get("https://pyroclasti.cloud/blog") == %{crawl: true}
+  	assert Miner.Crawler.Cache.get("https://pyroclasti.cloud/blog") == %{crawl: false}
   	assert Miner.Crawler.Cache.get("domain") == @domain
   end
 end

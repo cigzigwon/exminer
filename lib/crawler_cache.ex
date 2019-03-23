@@ -33,10 +33,7 @@ defmodule Miner.Crawler.Cache do
 
   @impl true
   def handle_call({:put, key, value}, _from, table) do
-    if key |> get == nil do
-      :ets.insert(table, {key, value})
-    end
-
+    :ets.insert(table, {key, value})
     {:reply, :ok, table}
   end
 

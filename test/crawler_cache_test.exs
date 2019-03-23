@@ -34,6 +34,6 @@ defmodule Miner.Crawler.CacheTest do
     Cache.flush(cache)
     assert Cache.put(cache, "key", "value") == :ok
     assert Cache.put(cache, "key", "newval") == :ok
-    assert Cache.get("key") == "value"
+    assert Cache.get("key") == "newval"
   end
 end
