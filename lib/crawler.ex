@@ -2,7 +2,7 @@ defmodule Miner.Crawler do
 	alias Miner.Crawler.Cache
 	require IO
 
-	@notallowed ["mailto:", "tel:", "ftp:", "#", "javascript:"]
+	@notallowed ["mailto:", "tel:", "ftp:", "#", "javascript:", "@"]
 
 	def get(url) do
 		if Cache.get("domain") == nil do
