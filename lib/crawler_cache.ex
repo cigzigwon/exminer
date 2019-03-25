@@ -26,6 +26,17 @@ defmodule Miner.Crawler.Cache do
   	GenServer.call(cache, {:put, key, value})
   end
 
+  def write() do
+    links = dump() |> transform
+    {:ok, file} = File.open("dump.json", [:write])
+    IO.binwrite(file, links |> Poison.encode!(pretty: true))
+    File.close(file)
+  end
+
+  defp transform(list) do
+    list |> Enum.map(fn {k, v} -> %{"#{k}" => v} end)
+  end
+
   ## Callbacks
 
   @impl true

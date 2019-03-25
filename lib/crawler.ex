@@ -2,7 +2,7 @@ defmodule Miner.Crawler do
 	alias Miner.Crawler.Cache
 	require IO
 
-	@notallowed ["mailto:", "tel:", "ftp:", "#"]
+	@notallowed ["mailto:", "tel:", "ftp:", "#", "javascript:", "@"]
 
 	def get(url) do
 		if Cache.get("domain") == nil do
@@ -10,6 +10,7 @@ defmodule Miner.Crawler do
 		end
 	
 		url
+		|> parse_url
 		|> fetch_body
 		|> refs
 		|> fix
@@ -29,7 +30,13 @@ defmodule Miner.Crawler do
 		links
 	end
 
-	def refs(body) do
+	defp parse_url(url) do
+		url
+		|> URI.parse
+		|> to_string
+	end
+
+	defp refs(body) do
 		body
 		|> Floki.find("a")
 		|> Floki.attribute("href")
@@ -40,8 +47,10 @@ defmodule Miner.Crawler do
 			peek url
 		end
 		
-		res = HTTPoison.get! url
-		res.body
+		case HTTPoison.get url do
+			{:ok, %{body: body}} -> body
+			_ -> ""
+		end
 	end
 
 	defp cache(links) do
@@ -52,7 +61,7 @@ defmodule Miner.Crawler do
 
 	defp fix(links) do
 		links
-		|> Enum.map(fn str -> if str |> String.match?(~r/^\/(\w+|\d+)/), do: Cache.get("domain") <> str, else: str end)
+		|> Enum.map(fn url -> if url |> String.match?(~r/^\/(\w+|\d+)/), do: Cache.get("domain") <> url, else: url end)
 	end
 
 	defp peek(data) do
@@ -62,11 +71,11 @@ defmodule Miner.Crawler do
 
 	defp sanitize(links) do
 		links
-		|> Enum.filter(fn str -> str |> is_valid? end)
+		|> Enum.filter(fn url -> url |> is_valid? end)
 	end
 
-	defp is_valid?(str) do
-		if str |> String.length > 1 and not String.contains?(str, @notallowed) do
+	defp is_valid?(url) do
+		if url |> String.length > 1 and not String.contains?(url, @notallowed) do
 			true
 		else 
 			false
