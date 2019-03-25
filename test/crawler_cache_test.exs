@@ -42,4 +42,10 @@ defmodule Miner.Crawler.CacheTest do
     assert Cache.put(cache, "key", "value") == :ok
     assert Cache.dump == [{"key", "value"}]
   end
+
+  test "can write cache to file" , %{cache: cache} do
+    Cache.flush(cache)
+    assert Cache.put(cache, "key", "value") == :ok
+    assert Cache.write == :ok
+  end
 end
