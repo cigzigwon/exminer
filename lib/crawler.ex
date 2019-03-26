@@ -82,8 +82,9 @@ defmodule Miner.Crawler do
 	end
 
 	defp in_scope?(url) do
-		uri = URI.parse url
-		uri.scheme <> "://" <> uri.host == Cache.get("domain")
+		domain = Cache.get("domain")
+		url |> String.match?(~r/^#{domain}/)
+
 	end
 
 	defp peek(data) do
