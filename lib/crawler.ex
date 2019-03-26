@@ -32,10 +32,10 @@ defmodule Miner.Crawler do
 
 	defp crawl(links) do
 		links
-		|> Enum.each(fn link ->
-			if Cache.get(link).crawl and link |> String.contains?(Cache.get("domain")) do
-				Cache |> Cache.put(link, %{crawl: false})
-				get(link)
+		|> Enum.each(fn url ->
+			if Cache.get(url).crawl do
+				Cache |> Cache.put(url, %{crawl: false})
+				get(url)
 			end
 		end)
 		links
@@ -81,6 +81,12 @@ defmodule Miner.Crawler do
 		|> Enum.map(fn url -> if url |> String.match?(~r/^\/(\w+|\d+)/), do: Cache.get("domain") <> url, else: url end)
 	end
 
+	defp in_scope?(url) do
+		domain = Cache.get("domain")
+		url |> String.match?(~r/^#{domain}/)
+
+	end
+
 	defp peek(data) do
 		IO.inspect data
 		data
@@ -92,7 +98,7 @@ defmodule Miner.Crawler do
 	end
 
 	defp is_valid?(url) do
-		if url |> String.length > 1 and not String.contains?(url, @notallowed) do
+		if url |> String.length > 1 and not String.contains?(url, @notallowed) and in_scope?(url) do
 			true
 		else 
 			false
