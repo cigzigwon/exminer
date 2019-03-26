@@ -2,16 +2,21 @@ defmodule Miner.Crawler do
 	alias Miner.Crawler.Cache
 	require IO
 
-	@asynctimeout 80000
+	@asynctimeout 8000
 	@notallowed ["mailto:", "tel:", "ftp:", "#", "javascript:", "@"]
 
 	def get(url) do
 		if Cache.get("domain") == nil do
-			Cache |> Cache.put("domain", url)
+			url |> set_domain
 		end
 
 		task = Task.Supervisor.async_nolink(Miner.TaskSupervisor, fn -> spawn_task(url) end)
 		Task.await(task, @asynctimeout)
+	end
+
+	def set_domain(url) do
+		uri = url |> URI.parse
+		Cache |> Cache.put("domain", uri.scheme <> "://" <> uri.host)
 	end
 
 	defp spawn_task(url) do
