@@ -7,11 +7,16 @@ defmodule Miner.Crawler do
 
 	def get(url) do
 		if Cache.get("domain") == nil do
-			Cache |> Cache.put("domain", url)
+			url |> set_domain
 		end
 
 		task = Task.Supervisor.async_nolink(Miner.TaskSupervisor, fn -> spawn_task(url) end)
 		Task.await(task, @asynctimeout)
+	end
+
+	def set_domain(url) do
+		uri = url |> URI.parse
+		Cache |> Cache.put("domain", uri.scheme <> "://" <> uri.host)
 	end
 
 	defp spawn_task(url) do
