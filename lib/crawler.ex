@@ -32,10 +32,11 @@ defmodule Miner.Crawler do
 
 	defp crawl(links) do
 		links
-		|> Enum.each(fn link ->
-			if Cache.get(link).crawl and link |> String.contains?(Cache.get("domain")) do
-				Cache |> Cache.put(link, %{crawl: false})
-				get(link)
+		|> Enum.each(fn url ->
+			uri = url |> URI.parse
+			if Cache.get(url).crawl and uri.scheme <> "://" <> uri.host == Cache.get("domain") do
+				Cache |> Cache.put(url, %{crawl: false})
+				get(url)
 			end
 		end)
 		links
