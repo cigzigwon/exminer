@@ -34,7 +34,7 @@ defmodule Miner.Crawler.Cache do
   end
 
   defp transform(list) do
-    list |> Enum.map(fn {k, v} -> %{"#{k}" => v} end)
+    list |> Enum.map(fn {k, _v} -> %{url: k, xpq: []} end)
   end
 
   ## Callbacks
