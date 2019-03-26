@@ -2,7 +2,7 @@ defmodule Miner.Crawler do
 	alias Miner.Crawler.Cache
 	require IO
 
-	@asynctimeout 80000
+	@asynctimeout 8000
 	@notallowed ["mailto:", "tel:", "ftp:", "#", "javascript:", "@"]
 
 	def get(url) do
