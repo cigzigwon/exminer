@@ -1,44 +1,51 @@
 defmodule Miner.Crawler do
-	alias Miner.Crawler.Cache
-	require IO
+	require Logger
+	use GenServer
 
-	@asynctimeout 8000
 	@notallowed ["mailto:", "tel:", "ftp:", "#", "javascript:", "@"]
 
-	def get(url) do
-		if Cache.get("domain") == nil do
-			url |> set_domain
-		end
+  def start_link(opts) do
+    GenServer.start_link(
+      __MODULE__,
+      Keyword.fetch!(opts, :url),
+      opts
+    )
+  end
 
-		task = Task.Supervisor.async_nolink(Miner.TaskSupervisor, fn -> spawn_task(url) end)
-		Task.await(task, @asynctimeout)
-	end
+	@impl true
+  def init(url) do
+  	state = %{
+  		init: url,
+  		last: nil,
+  		next: url
+  	}
+    {:ok, state, {:continue, :crawl}}
+  end
 
-	def set_domain(url) do
-		uri = url |> URI.parse
-		Cache |> Cache.put("domain", uri.scheme <> "://" <> uri.host)
-	end
-
-	defp spawn_task(url) do
-		url
+  def fetch(url, state) do
+  	url
 		|> parse_url
 		|> fetch_body
 		|> refs
-		|> fix
-		|> sanitize
-		|> cache
-		|> crawl
+		|> fix(state[:init])
+		|> sanitize(state[:init])
+  end
+
+  @impl true
+  def handle_continue(:crawl, state = %{next: urls}) when is_list(urls) do
+		urls =
+			urls |> Enum.reduce([], fn url, acc ->
+				acc ++ fetch(url, state)
+			end)
+		state = Map.put(state, :next, urls)
+		{:noreply, state}
 	end
 
-	defp crawl(links) do
-		links
-		|> Enum.each(fn url ->
-			if Cache.get(url).crawl do
-				Cache |> Cache.put(url, %{crawl: false})
-				get(url)
-			end
-		end)
-		links
+	@impl true
+	def handle_continue(:crawl, state = %{next: url}) do
+		urls = fetch(url, state)
+		state = Map.put(state, :next, urls)
+		{:noreply, state}
 	end
 
 	defp parse_url(url) do
@@ -60,45 +67,28 @@ defmodule Miner.Crawler do
 	end
 
 	defp fetch_body(url) do
-		if Mix.env != :test do
-			peek url
-		end
-		
 		case HTTPoison.get url do
 			{:ok, %{body: body}} -> body
 			_ -> ""
 		end
 	end
 
-	defp cache(links) do
+	defp fix(links, scope) do
 		links
-		|> Enum.each(fn link -> if Cache.get(link) == nil, do: Cache |> Cache.put(link, %{crawl: true}) end)
+		|> Enum.map(fn url -> if url |> String.match?(~r/^\/(\w+|\d+)/), do: scope <> url, else: url end)
+	end
+
+	defp in_scope?(url, scope) do
+		url |> String.match?(~r/^#{scope}/)
+	end
+
+	defp sanitize(links, scope) do
 		links
+		|> Enum.filter(fn url -> url |> is_valid?(scope) end)
 	end
 
-	defp fix(links) do
-		links
-		|> Enum.map(fn url -> if url |> String.match?(~r/^\/(\w+|\d+)/), do: Cache.get("domain") <> url, else: url end)
-	end
-
-	defp in_scope?(url) do
-		domain = Cache.get("domain")
-		url |> String.match?(~r/^#{domain}/)
-
-	end
-
-	defp peek(data) do
-		IO.inspect data
-		data
-	end
-
-	defp sanitize(links) do
-		links
-		|> Enum.filter(fn url -> url |> is_valid? end)
-	end
-
-	defp is_valid?(url) do
-		if url |> String.length > 1 and not String.contains?(url, @notallowed) and in_scope?(url) do
+	defp is_valid?(url, scope) do
+		if url |> String.length > 1 and not String.contains?(url, @notallowed) and in_scope?(url, scope) do
 			true
 		else 
 			false
