@@ -9,7 +9,8 @@ defmodule Miner.Supervisor do
   @impl true
   def init(_init_arg) do
     children = [
-      # probably only needs a repo for urls
+      {Registry,
+       [keys: :unique, name: Registry.SitemapRepo, partitions: System.schedulers_online()]}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

@@ -1,9 +1,9 @@
 defmodule Miner.XPQ do
-	import Floki
+  import Floki
 
-	def text(doc, selector) do
-		doc
-		|> find(selector)
-		|> text
-	end
+  def text(doc, selector) do
+    doc
+    |> find(selector)
+    |> text
+  end
 end
