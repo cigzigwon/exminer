@@ -23,6 +23,7 @@ defmodule Miner.Crawler do
   end
 
   def fetch(url, state) do
+  	Logger.info "Fetch URL: #{url}"
   	url
 		|> parse_url
 		|> fetch_body
