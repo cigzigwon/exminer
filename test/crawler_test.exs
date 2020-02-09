@@ -1,24 +1,8 @@
-defmodule Miner.CrawlerTest do
+defmodule CrawlerTest do
   use ExUnit.Case
-  doctest Miner.Crawler
 
-  @domain "https://pyroclasti.cloud"
-
-  setup do
-  	links = Miner.Crawler.get(@domain)
-  	%{links: links}
-  end
-
-  test "can get all links from a page", %{links: links} do
-  	assert is_list(links)
-  end
-
-  test "can sanitize list of links of non-urls", %{links: links} do
-  	assert links == ["https://pyroclasti.cloud/blog"]
-  end
-
-  test "can get a link from cache" do
-  	assert Miner.Crawler.Cache.get("https://pyroclasti.cloud/blog") == %{crawl: false}
-  	assert Miner.Crawler.Cache.get("domain") == @domain
+  test "can weild a non-broken pipeline to get a list of links from any domain" do
+    links = Miner.Crawler.fetch("https://pyroclasti.cloud/", %{init: "https://pyroclasti.cloud/"})
+    assert 2 == length(links)
   end
 end

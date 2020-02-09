@@ -9,10 +9,8 @@ defmodule Miner.Supervisor do
   @impl true
   def init(_init_arg) do
     children = [
-      Miner.Crawler.Cache,
-      {Miner.TaskQueue, name: Miner.TaskQueue},
-      {Task.Supervisor, name: Miner.TaskSupervisor},
-      {Task.Supervisor, name: Miner.TaskQueueSupervisor}
+      {Registry,
+       [keys: :duplicate, name: Registry.SitemapRepo, partitions: System.schedulers_online()]}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
