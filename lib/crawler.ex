@@ -24,8 +24,7 @@ defmodule Miner.Crawler do
   end
 
   def fetch(url, state) do
-    Logger.info("Fetch URL: #{url}")
-
+    Logger.info("Fetching URL: #{url}")
     url
     |> parse_url
     |> fetch_body
@@ -36,11 +35,17 @@ defmodule Miner.Crawler do
 
   @impl true
   def handle_continue(:crawl, state = %{next: urls}) when is_list(urls) do
-  	IO.inspect urls
     urls =
       urls
       |> Enum.reduce([], fn url, acc ->
-      	urls = fetch(url, state)
+      	urls =
+      	case Registry.lookup(Registry.SitemapRepo, url) do
+      		[] ->
+      			Process.sleep(400)
+      			fetch(url, state)
+      		_ ->
+      			[]
+      	end
       	Registry.register(Registry.SitemapRepo, url, urls)
         acc ++ urls
       end)
@@ -49,21 +54,26 @@ defmodule Miner.Crawler do
     if length(urls) > 0 do
     	{:noreply, state, {:continue, :crawl}}
     else
-    	{:noreply, state}
+    	{:stop, :shutdown, state}
     end
   end
 
   @impl true
   def handle_continue(:crawl, state = %{next: url}) do
-  	Logger.info "Crawling..."
+  	Logger.info "Crawling domain #{url} ....."
     urls = fetch(url, state)
     Registry.register(Registry.SitemapRepo, url, urls)
     state = Map.put(state, :next, urls)
     if length(urls) > 0 do
     	{:noreply, state, {:continue, :crawl}}
     else
-    	{:noreply, state}
+    	{:stop, :shutdown, state}
     end
+  end
+
+  @impl true
+  def terminate(:shutdown, state) do
+  	Logger.info("Finished crawling domain! #{state[:init]}")
   end
 
   defp parse_url(url) do
@@ -87,16 +97,19 @@ defmodule Miner.Crawler do
   end
 
   defp fetch_body(url) do
+  	body =
     case HTTPoison.get(url) do
       {:ok, %{body: body}} -> body
       _ -> ""
     end
+    Registry.register(Registry.SitemapRepo, url, body)
+    body
   end
 
   defp fix(links, scope) do
     links
     |> Enum.map(fn url ->
-      if url |> String.match?(~r/^\/(\w+|\d+)/), do: scope <> url, else: url
+      if url |> String.match?(~r/^\/(\w+|\d+)/), do: parse_url((scope <> url)), else: url
     end)
   end
 

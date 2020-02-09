@@ -10,7 +10,7 @@ defmodule Miner.Supervisor do
   def init(_init_arg) do
     children = [
       {Registry,
-       [keys: :unique, name: Registry.SitemapRepo, partitions: System.schedulers_online()]}
+       [keys: :duplicate, name: Registry.SitemapRepo, partitions: System.schedulers_online()]}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
