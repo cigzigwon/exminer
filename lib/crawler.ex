@@ -67,8 +67,12 @@ defmodule Miner.Crawler do
         urls =
           case lookup(url) do
             [] ->
-              Process.sleep(400)
-              urls = fetch(url, state)
+              fetch =
+                Task.async(fn ->
+                  fetch(url, state)
+                end)
+
+              urls = Task.await(fetch)
               Registry.register(Registry.SitemapRepo, url, urls)
               urls
 
@@ -104,7 +108,13 @@ defmodule Miner.Crawler do
 
   @impl true
   def terminate(:shutdown, state) do
-    Logger.info("Registry terminated data for: #{state[:init]}")
+    Logger.info("Process shutdown: #{state[:init]}")
+  end
+
+  @impl true
+  def terminate(reason, _) do
+  	IO.puts reason
+    Logger.info("Process crashed")
   end
 
   defp parse_url(url) do
