@@ -39,13 +39,16 @@ defmodule Miner.Crawler do
   end
 
   def html(url) do
-    {_, html} =
-      Registry.lookup(Registry.SitemapRepo, url)
-      |> Enum.find(fn {_, data} ->
-        !is_list(data)
-      end)
+    case Registry.lookup(Registry.SitemapRepo, url)
+         |> Enum.find(fn {_, data} ->
+           !is_list(data)
+         end) do
+      {_, html} ->
+        html
 
-    html
+      res ->
+        res
+    end
   end
 
   def urls(pid) do
@@ -67,12 +70,7 @@ defmodule Miner.Crawler do
         urls =
           case lookup(url) do
             [] ->
-              fetch =
-                Task.async(fn ->
-                  fetch(url, state)
-                end)
-
-              urls = Task.await(fetch)
+              urls = fetch(url, state)
               Registry.register(Registry.SitemapRepo, url, urls)
               urls
 
@@ -113,7 +111,7 @@ defmodule Miner.Crawler do
 
   @impl true
   def terminate(reason, _) do
-  	IO.puts reason
+    IO.puts(reason)
     Logger.info("Process crashed")
   end
 
@@ -138,8 +136,13 @@ defmodule Miner.Crawler do
   end
 
   defp fetch_body(url) do
+    response =
+      Task.async(fn ->
+        HTTPoison.get(url)
+      end)
+
     body =
-      case HTTPoison.get(url) do
+      case Task.await(response) do
         {:ok, %{body: body}} -> body
         _ -> ""
       end
@@ -151,7 +154,9 @@ defmodule Miner.Crawler do
   defp fix(links, scope) do
     links
     |> Enum.map(fn url ->
-      if url |> String.match?(~r/^\/(\w+|\d+)/), do: parse_url(scope <> url), else: url
+      if url |> String.match?(~r/^\/(.*)/),
+        do: (scope <> url) |> parse_url(),
+        else: url
     end)
   end
 
